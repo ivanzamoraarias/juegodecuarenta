@@ -4,7 +4,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 type HomeProps = {
   navigation:StackNavigationProp<
-  {Game:undefined},
+  {
+      Game:undefined,
+      Tablero:undefined,
+      Cuarenta:undefined
+
+  },
   'Game'
 >
 }
@@ -18,17 +23,20 @@ const Home:FunctionComponent<HomeProps> = (props:HomeProps) => {
           <Text>{"Listo para jugar Cuarenta ? "}</Text>
         </View>
         <View style={styles.button}>
-          <Button title="Continue" onPress={() => {
+          <Button title="Rules" onPress={() => {
+              props.navigation.navigate('Cuarenta');
             setTitleText("Cuarenta");
           }} />
+
           <View style={styles.button}>
-            <Button title="New Game" onPress={() => { 
-              console.log("HOLAAANNNNENENENE")
-              props.navigation.navigate('Game')
+            <Button title="New Game" onPress={() => {
+              props.navigation.navigate('Game');
             }}></Button>
           </View>
           <View style={styles.button}>
-            <Button title="Credits" onPress={() => { }}></Button>
+            <Button title="Tablero" onPress={() => {
+                props.navigation.navigate('Tablero');
+            }}></Button>
           </View>
         </View>
       </View>

@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
 import Home from './Home/Home';
 import GameScene from './GameScreen/GameScene'
+import Tablero from "./TableroCartas/Tablero";
+import Cuarenta from "./Cuarenta/Cuarenta";
 
 const Stack = createStackNavigator();
 
@@ -17,9 +19,17 @@ export default function App() {
           options={{ title: 'Juego de Cuarenta' }}
         />
         <Stack.Screen
+            name='Cuarenta'
+            component={Cuarenta}
+
+        />
+        <Stack.Screen
           name='Game'
           component={GameScene}
         />
+        <Stack.Screen
+            name='Tablero'
+        component={Tablero}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
