@@ -12,13 +12,13 @@ type GameProps = {
 class Tablero extends React.Component <GameProps, any> {
     _onGLContextCreate = async(gl: any) => {
         const ctx:any = new Expo2DContext(gl);
-        this.drawRobot(ctx);
-        //this.drawCard(ctx,{x:100,y:1000});
+        //this.drawRobot(ctx);
+        this.drawCard(ctx,{x:100,y:1000});
         //this.drawCard(ctx,{x:450,y:1000});
         //this.drawCard(ctx,{x:800,y:1000});
 
-        //ctx.stroke();
-        //ctx.flush();
+        ctx.stroke();
+        ctx.flush();
     }
 
     private drawCard(ctx: any, vec:{x:number,y:number}) {
@@ -65,6 +65,7 @@ class Tablero extends React.Component <GameProps, any> {
                 style={{ flex: 1 }}
                 onContextCreate={this._onGLContextCreate}
             />
+            // <View></View>
         );
     }
 

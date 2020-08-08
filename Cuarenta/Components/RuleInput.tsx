@@ -57,7 +57,16 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 20
+        borderRadius: 20,
+        backgroundColor: "white",
+        marginTop: 22,
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
     },
     input: {
         width: '80%',
