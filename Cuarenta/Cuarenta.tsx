@@ -10,10 +10,9 @@ export default function Cuarenta() {
     const [isRuleModalVisible, setIsRuleModalVisible] = useState(false);
 
 
-
     const addRuleHandler = (newRule: string) => {
         //const newKey: string = v4(); // not supported -_-
-        const newKey:string=Math.random().toString();
+        const newKey: string = Math.random().toString();
         // @ts-ignore
         setRules([
             ...rules,
@@ -22,30 +21,45 @@ export default function Cuarenta() {
         setIsRuleModalVisible(false);
     }
 
-    const deleteRuleHandler = (ruleId: any) =>{
+    const deleteRuleHandler = (ruleId: any) => {
         // @ts-ignore
-        setRules(rule=> rules.filter((item)=>item.id != ruleId))
+        setRules(rule => rules.filter((item) => item.id != ruleId))
     }
+
+    const hideModalOnCancel = () => {
+        setIsRuleModalVisible(false);
+    }
+
 
 
     return (
         <View>
             <View>
-                <Text>{"Please add the rules for the game that you want to design"}</Text>
+                <Text style={styles.titleText}>{"Please add the rules for the game that you want to design"}</Text>
                 <Button
                     title={"Add A Rule"}
-                    onPress={() => {setIsRuleModalVisible(true)}}
+                    onPress={() => {
+                        setIsRuleModalVisible(true)
+                    }}
                 />
             </View>
             <View>
                 <RuleInput
                     isVisible={isRuleModalVisible}
                     onAddRule={addRuleHandler}
+                    onCancel={hideModalOnCancel}
                 />
                 <FlatList data={rules} renderItem={
                     itemData => (
                         // @ts-ignore
-                        <RuleItem key={itemData.item.key} deleteHandler={deleteRuleHandler} ruleName={itemData.item.value}/>
+                        <RuleItem
+                            // @ts-ignore
+                            key={itemData.item.key}
+                            // @ts-ignore
+                            ruleName={itemData.item.value}
+                            deleteHandler={deleteRuleHandler}
+
+                        />
                     )
                 }/>
                 {/*<ScrollView>
@@ -67,6 +81,10 @@ export default function Cuarenta() {
 const styles = StyleSheet.create({
     screen: {
         padding: 50
+    },
+    titleText: {
+        fontSize: 20,
+        fontWeight: "bold"
     }
 
 });
