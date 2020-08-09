@@ -7,7 +7,8 @@ type HomeProps = {
   {
       Game:undefined,
       Tablero:undefined,
-      Cuarenta:undefined
+      Cuarenta:undefined,
+      ImageChat:undefined
 
   },
   'Game'
@@ -38,6 +39,11 @@ const Home:FunctionComponent<HomeProps> = (props:HomeProps) => {
                 props.navigation.navigate('Tablero');
             }}></Button>
           </View>
+            <View style={styles.button}>
+                <Button title="ImageChat" onPress={() => {
+                    props.navigation.navigate('ImageChat');
+                }}></Button>
+            </View>
         </View>
       </View>
     )

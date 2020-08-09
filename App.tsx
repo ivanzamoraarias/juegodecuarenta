@@ -6,6 +6,7 @@ import Home from './Home/Home';
 import GameScene from './GameScreen/GameScene'
 import Tablero from "./TableroCartas/Tablero";
 import Cuarenta from "./Cuarenta/Cuarenta";
+import ImageChat from "./ImageChat/ImageChat"
 
 const Stack = createStackNavigator();
 
@@ -40,6 +41,9 @@ export default function App() {
                 <Stack.Screen
                     name='Tablero'
                     component={Tablero}
+                />
+                <Stack.Screen name='ImageChat'
+                              component={ImageChat}
                 />
             </Stack.Navigator>
         </NavigationContainer>
