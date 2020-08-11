@@ -6,39 +6,71 @@ const firebaseConfig = {
     authDomain: FirebaseConfiguration.authDomain,
     databaseURL: FirebaseConfiguration.databaseURL,
     storageBucket: FirebaseConfiguration.storageBucket,
-    messagingSenderId:FirebaseConfiguration.messagingSenderId,
-    projectId:FirebaseConfiguration.projectId
+    messagingSenderId: FirebaseConfiguration.messagingSenderId,
+    projectId: FirebaseConfiguration.projectId
 }
 
-//todo make a singleton class for firebase initialization
-firebase.initializeApp(firebaseConfig);
+class FirebaseService {
+    private static instance: FirebaseService | undefined | null;
+    private static listeningPath: string;
 
-/*
-const dbh = firebase.firestore();
+    private constructor() {
+        firebase.initializeApp(firebaseConfig);
+        //FirebaseService.listeningPath = "";
+    }
 
-dbh.collection("characters").doc("mario").set({
-    employment: "plumber",
-    outfitColor: "red",
-    specialAttack: "fireball"
-})*/
-function storeNewOwnMessage(userId: string, message: string): void {
-    const currentTime: string = new Date().getTime().toString();
-    const path: string = `imageMessages/${userId}/${currentTime}`;
-    firebase.database().ref(path).set({
-        message: message
-    });
+    public static initializeInstance(): FirebaseService {
+        if (FirebaseService.instance === null || FirebaseService.instance === undefined) {
+
+            FirebaseService.instance = new FirebaseService();
+        }
+
+        return FirebaseService.instance;
+    }
+
+    public static disconnectFirebase() {
+        if(FirebaseService.listeningPath === null || FirebaseService.listeningPath === undefined || FirebaseService.listeningPath === "")
+            return;
+        firebase.database().ref(FirebaseService.listeningPath).off();
+    }
+
+    public static insertIntoFirebase(path: string, value: any): void {
+        FirebaseService.initializeInstance();
+        firebase
+            .database()
+            .ref(path)
+            .set(value);
+    }
+
+    public static listenToFirebase(path: string, callback: (value: any) => void): void {
+        if(path === null || path === undefined || path === "")
+            return;
+        FirebaseService.initializeInstance();
+        firebase
+            .database()
+            .ref(path)
+            .on('value', (snapshot) => {
+                    callback(snapshot.val());
+                }
+            );
+
+    }
+
+    public static storeNewOwnMessage(userId: string, message: string): void {
+        console.log("MESSAAAGGEEE", message);
+        const path: string = `imageMessages/${userId}`;
+        FirebaseService.insertIntoFirebase(path, {
+            lastOne: message
+        });
+
+    }
+
+    public static listenNewPartnerMessage(partnerId: string, callback: (value: any) => void): void {
+        const path: string = 'imageMessages/' + partnerId;
+        FirebaseService.listeningPath = path;
+        FirebaseService.listenToFirebase(path, callback);
+    }
 }
 
-function listenNewPartnerMessage(partnerId: string): void {
-    firebase
-        .database()
-        .ref('imageMessages/' + partnerId)
-        .on('value', (snapshot) => {
-                const partnerMessage =
-                    snapshot.val().message;
-                console.log("New message: " + partnerMessage);
-            }
-        );
-}
 
-export {storeNewOwnMessage, listenNewPartnerMessage}
+export {FirebaseService}
