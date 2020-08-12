@@ -8,12 +8,12 @@ import MemoryService from "../Storage/Memory/MemoryService";
 const imageUri: string = "https://i.pinimg.com/originals/ed/83/7a/ed837acb91e3ee1a42c46538b509b504.jpg";
 //https://1.bp.blogspot.com/-slPQMdRIiE0/XchjiHQcOgI/AAAAAAAALm8/OK-GsqynYm4qhL7DuCvnyzN24etS76jOACKgBGAsYHg/s1600/IMG_20191028_130922.jpg
 
-let algo:string = "";
-const ImageChat = () => {
+let algo: string = "";
+const ImageChat = (props:any) => {
 
-    useEffect(()=>{
+    useEffect(() => {
         MemoryService.addMemoryKey("messages");
-    },[]);
+    }, []);
 
     //todo create a reducer for this part
     const [ownMessage, setOwnMessage] = useState("");
@@ -21,8 +21,6 @@ const ImageChat = () => {
     const [partnerName, setPartnerName] = useState("");
     const [ownName, setOwnName] = useState("");
     const [partnerMessage, setPartnerMessage] = useState("");
-
-
 
 
     useEffect(() => {
@@ -37,29 +35,28 @@ const ImageChat = () => {
 
     }, [partnerName])
 
-    useEffect(()=>{
+    useEffect(() => {
         setMessages([...MemoryService.getElementByKey("messages")]);
-    },[partnerMessage]);
+    }, [partnerMessage]);
 
-    const updateFromFirebase = (value:{lastOne: string}) => {
-        if(!value)
+    const updateFromFirebase = (value: { lastOne: string }) => {
+        if (!value)
             return;
 
         setPartnerMessage(value.lastOne);
-        MemoryService.pushElementToKey("messages",`${value.lastOne}`);
+        MemoryService.pushElementToKey("messages", `${value.lastOne}`);
     }
-
 
 
     const appendMessage = (message: string) => {
         setOwnMessage(message);
     }
     const addMessages = () => {
-        const newMessage:string = `${ownMessage}`;
+        const newMessage: string = `${ownMessage}`;
 
         FirebaseService.storeNewOwnMessage(ownName, ownMessage);
-        MemoryService.pushElementToKey("messages",newMessage);
-        setMessages(MemoryService.getElementByKey("messages"));
+        MemoryService.pushElementToKey("messages", newMessage);
+        setMessages([...MemoryService.getElementByKey("messages")]);
 
 
     }
@@ -85,32 +82,35 @@ const ImageChat = () => {
             <View style={styles.messagesContainer}>
                 <ScrollView>
                     <Text style={styles.text}>
-                        {messages.map((m:string)=>`\n${m}`)}
+                        {messages.map((m: string) => `\n${m}`)}
                     </Text>
                 </ScrollView>
 
             </View>
+            <View style={styles.userTextInput}>
+                <TextInput
+                    style={styles.textToSend}
+                    placeholder={"Escribe tu mensaje aqui"}
+                    onChangeText={appendMessage}
+                    value={ownMessage}
 
-            <TextInput
-                placeholder={"Escribe tu mensaje aqui"}
-                onChangeText={appendMessage}
-                value={ownMessage}
-
-            />
-            <TouchableHighlight
-                style={styles.button}
-                onPress={addMessages}
-            >
-                <Text>
-                    {"Enviar"}
-                </Text>
-            </TouchableHighlight>
+                />
+                <TouchableHighlight
+                    style={styles.button}
+                    onPress={addMessages}
+                >
+                    <Text>
+                        {"Enviar"}
+                    </Text>
+                </TouchableHighlight>
+            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
+        flex:1,
         paddingTop: 10,
         paddingLeft: 50,
         paddingRight: 50
@@ -126,21 +126,40 @@ const styles = StyleSheet.create({
     },
     logo: {
         width: '100%',
-        height: '30%'
+        height: '20%'
     },
     text: {
 
         fontSize: 20,
         fontWeight: "bold"
     },
+    userTextInput:{
+        flex:1,
+        flexDirection: 'row',
+        textAlign: 'center',
+        height:"30%"
+    },
+    textToSend: {
+        width:"60%",
+        padding: 1,
+        height:"30%",
+        justifyContent: "space-between"
+    },
     button: {
         backgroundColor: "#F194FF",
         borderRadius: 20,
-        padding: 10,
-        elevation: 2
+        padding: 1,
+        marginTop:5,
+        elevation: 2,
+        width:"30%",
+        height:"30%",
+        textAlign:"center",
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     messagesContainer: {
-        height: '50%'
+        height: '40%'
     }
 });
 

@@ -8,7 +8,15 @@ import Tablero from "./TableroCartas/Tablero";
 import Cuarenta from "./Cuarenta/Cuarenta";
 import ImageChat from "./ImageChat/ImageChat"
 
-const Stack = createStackNavigator();
+type AppParams ={
+    Home:undefined,
+    Game:undefined,
+    Tablero:undefined,
+    Cuarenta:undefined,
+    ImageChat:undefined
+}
+
+const Stack = createStackNavigator<AppParams>();
 
 export default function App() {
     return (

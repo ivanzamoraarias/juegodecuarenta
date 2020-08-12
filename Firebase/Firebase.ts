@@ -57,7 +57,6 @@ class FirebaseService {
     }
 
     public static storeNewOwnMessage(userId: string, message: string): void {
-        console.log("MESSAAAGGEEE", message);
         const path: string = `imageMessages/${userId}`;
         FirebaseService.insertIntoFirebase(path, {
             lastOne: message
