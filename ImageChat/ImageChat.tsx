@@ -10,17 +10,18 @@ const imageUri: string = "https://i.pinimg.com/originals/ed/83/7a/ed837acb91e3ee
 
 let algo:string = "";
 const ImageChat = () => {
-    //MemoryService.initializeMemoryService();
+
     useEffect(()=>{
         MemoryService.addMemoryKey("messages");
     },[]);
+
+    //todo create a reducer for this part
     const [ownMessage, setOwnMessage] = useState("");
     const [messages, setMessages] = useState([""]);
     const [partnerName, setPartnerName] = useState("");
     const [ownName, setOwnName] = useState("");
     const [partnerMessage, setPartnerMessage] = useState("");
-    const [mostrat, setMostrar] = useState("");
-    const [val, setVal] = useState(0);
+
 
 
 
@@ -36,21 +37,16 @@ const ImageChat = () => {
 
     }, [partnerName])
 
-    useEffect(()=>{},[partnerMessage]);
+    useEffect(()=>{
+        setMessages([...MemoryService.getElementByKey("messages")]);
+    },[partnerMessage]);
 
     const updateFromFirebase = (value:{lastOne: string}) => {
         if(!value)
             return;
 
-        console.log("Updated from firebase", value.lastOne);
         setPartnerMessage(value.lastOne);
-
-        MemoryService.pushElementToKey("messages",value.lastOne);
-
-        setMessages(MemoryService.getElementByKey("messages"));
-
-        console.log("Messages From Memory", MemoryService.getElementByKey("messages"));
-        console.log("Messages from State", messages);
+        MemoryService.pushElementToKey("messages",`${value.lastOne}`);
     }
 
 
@@ -60,15 +56,11 @@ const ImageChat = () => {
     }
     const addMessages = () => {
         const newMessage:string = `${ownMessage}`;
-        // @ts-ignore
-        //setMessages([...messages, newMessage]);
+
         FirebaseService.storeNewOwnMessage(ownName, ownMessage);
         MemoryService.pushElementToKey("messages",newMessage);
-
         setMessages(MemoryService.getElementByKey("messages"));
 
-        setMostrar(`\n${mostrat}\n${newMessage}`);
-        algo += `\n${newMessage}`;
 
     }
 
@@ -94,8 +86,6 @@ const ImageChat = () => {
                 <ScrollView>
                     <Text style={styles.text}>
                         {messages.map((m:string)=>`\n${m}`)}
-                        {`\n${partnerMessage===messages[messages.length-1]?"":partnerMessage}`}
-                        {console.log("compara con el ultimo",partnerMessage===messages[messages.length-1])}
                     </Text>
                 </ScrollView>
 
