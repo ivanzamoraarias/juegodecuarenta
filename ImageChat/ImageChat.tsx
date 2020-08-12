@@ -22,6 +22,8 @@ const ImageChat = () => {
     const [mostrat, setMostrar] = useState("");
     const [val, setVal] = useState(0);
 
+
+
     useEffect(() => {
         FirebaseService
             .initializeInstance();
@@ -30,27 +32,27 @@ const ImageChat = () => {
         FirebaseService
             .listenNewPartnerMessage(
                 partnerName,
-                (value: { lastOne: string }) => {
-                    if(!value)
-                        return;
-
-                    console.log("Updated from firebase", value.lastOne);
-                    setPartnerMessage(value.lastOne);
-                    setMostrar(`\n${mostrat}\n${value.lastOne}`);
-                    algo += `\n${value.lastOne}`;
-
-                    MemoryService.pushElementToKey("messages",value.lastOne);
-
-                    setMessages(MemoryService.getElementByKey("messages"));
-
-
-                });
+                updateFromFirebase);
 
     }, [partnerName])
 
-    useEffect(() => {
-        setVal(1);
-    }),[partnerMessage];
+    useEffect(()=>{},[partnerMessage]);
+
+    const updateFromFirebase = (value:{lastOne: string}) => {
+        if(!value)
+            return;
+
+        console.log("Updated from firebase", value.lastOne);
+        setPartnerMessage(value.lastOne);
+
+        MemoryService.pushElementToKey("messages",value.lastOne);
+
+        setMessages(MemoryService.getElementByKey("messages"));
+
+        console.log("Messages From Memory", MemoryService.getElementByKey("messages"));
+        console.log("Messages from State", messages);
+    }
+
 
 
     const appendMessage = (message: string) => {
@@ -62,26 +64,12 @@ const ImageChat = () => {
         //setMessages([...messages, newMessage]);
         FirebaseService.storeNewOwnMessage(ownName, ownMessage);
         MemoryService.pushElementToKey("messages",newMessage);
+
         setMessages(MemoryService.getElementByKey("messages"));
 
         setMostrar(`\n${mostrat}\n${newMessage}`);
         algo += `\n${newMessage}`;
 
-    }
-    const getMessagesStringAsStack = () => {
-       // const memoryMessages = MemoryService.getElementByKey("messages");
-        let result: string = "";
-        /*if(memoryMessages === [] || memoryMessages === undefined )
-            return result;*/
-
-
-        /*memoryMessages.forEach((m: string) => {
-            result = `${result}\n${m}`;
-        });*/
-        messages.forEach((m: string) => {
-            result = `${result}\n${m}`;
-        });
-        return result;
     }
 
 
@@ -106,9 +94,11 @@ const ImageChat = () => {
                 <ScrollView>
                     <Text style={styles.text}>
                         {messages.map((m:string)=>`\n${m}`)}
+                        {`\n${partnerMessage===messages[messages.length-1]?"":partnerMessage}`}
+                        {console.log("compara con el ultimo",partnerMessage===messages[messages.length-1])}
                     </Text>
                 </ScrollView>
-                <Text>{partnerMessage}</Text>
+
             </View>
 
             <TextInput
