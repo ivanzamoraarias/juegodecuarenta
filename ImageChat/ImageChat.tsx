@@ -8,7 +8,6 @@ import MemoryService from "../Storage/Memory/MemoryService";
 const imageUri: string = "https://i.pinimg.com/originals/ed/83/7a/ed837acb91e3ee1a42c46538b509b504.jpg";
 //https://1.bp.blogspot.com/-slPQMdRIiE0/XchjiHQcOgI/AAAAAAAALm8/OK-GsqynYm4qhL7DuCvnyzN24etS76jOACKgBGAsYHg/s1600/IMG_20191028_130922.jpg
 
-let algo: string = "";
 const ImageChat = (props:any) => {
 
     useEffect(() => {
