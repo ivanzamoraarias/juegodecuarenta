@@ -30,4 +30,24 @@ export class Handlers {
             ownMessage: value
         }
     }
+
+    public static SetPartnerMessageHandler(
+        state:ImageChatState,
+        value:string)
+        :ImageChatState {
+        return {
+            ...state,
+            partnerMessage: value
+        };
+    }
+
+    public static SetMessagesHandler(
+        state:ImageChatState,
+        value:string[])
+        :ImageChatState{
+        return {
+            ...state,
+            messages: [...value]
+        };
+    }
 }

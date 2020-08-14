@@ -8,6 +8,7 @@ function Reducer(state:ImageChatState, action:actionEventType): ImageChatState {
     switch (action.type) {
         case Actions.setOwnName:
             return Handlers.SetOwnNameHandler(state,action.stringValue);
+
         case Actions.setPartnerName:
             return Handlers.SetPartnerNameHandler(state,action.stringValue);
 
@@ -15,15 +16,10 @@ function Reducer(state:ImageChatState, action:actionEventType): ImageChatState {
             return Handlers.SetOwnMessageHandler(state,action.stringValue);
 
         case Actions.setPartnerMessage:
-            return {
-                ...state,
-                partnerMessage: action.stringValue
-            };
+            return Handlers.SetPartnerMessageHandler(state, action.stringValue);
+
         case Actions.setMessages:
-            return {
-                ...state,
-                messages: [...action.arrayValue]
-            };
+            return Handlers.SetMessagesHandler(state, [...action.arrayValue]);
     }
 
     return state;
