@@ -6,11 +6,13 @@ import Reducer from "../Reducer/ImageChatReducer/Reducer";
 import {initialState} from "../Reducer/ImageChatReducer/State";
 import ImageEvents from "../Reducer/ImageChatReducer/Events";
 import DatabaseEnum from "../Constants/DatabaseEnum";
-import styles from "./ImageChatStyle";
+import styles from "./Styles/ImageChatStyle";
 import UIEnum from "../Constants/UIEnum";
 import AssetsEnum from "../Constants/AssetsEnum";
+import MessageInput from "./Components/MessageInput";
+import UsersNameInput from "./Components/UsersNameInput";
 
-const ImageChat = (props:any) => {
+const ImageChat = (props: any) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
     const scrollViewRef = createRef<ScrollView>();
 
@@ -73,8 +75,8 @@ const ImageChat = (props:any) => {
 
     }
 
-    const scrollToButton= ()=> {
-        if(scrollViewRef.current === null)
+    const scrollToButton = () => {
+        if (scrollViewRef.current === null)
             return;
         scrollViewRef.current.scrollToEnd({animated: true})
     }
@@ -82,25 +84,23 @@ const ImageChat = (props:any) => {
 
     return (
         <View style={styles.container}>
-            <TextInput
-                placeholder={UIEnum.YourFriend}
-                onChangeText={(val: string) => {
+            <UsersNameInput
+                friendPlaceholder={UIEnum.YourFriend}
+                userPlaceholder={UIEnum.YourName}
+                partnerName={state.partnerName}
+                ownName={state.ownName}
+                onFriendUpdate={(val: string) => {
                     dispatch(ImageEvents.GetEventForSetPartnerName(val));
                 }}
-                value={state.partnerName}
-            />
-            <TextInput
-                placeholder={UIEnum.YourName}
-                onChangeText={(val: string) => {
+                onUserUpdate={(val: string) => {
                     dispatch(ImageEvents.GetEventForSetOwnName(val));
                 }}
-                value={state.ownName}
             />
+
             <Image
                 style={styles.logo}
-                source={{
-                    uri: AssetsEnum.CatsImage
-                }}/>
+                source={{uri: AssetsEnum.CatsImage}}
+            />
             <View style={styles.messagesContainer}>
                 <ScrollView
                     ref={scrollViewRef}
@@ -110,29 +110,16 @@ const ImageChat = (props:any) => {
                         {state.messages.map((m: string) => `\n${m}`)}
                     </Text>
                 </ScrollView>
-
             </View>
-            <View style={styles.userTextInput}>
-                <TextInput
-                    style={styles.textToSend}
-                    placeholder={UIEnum.WriteHere}
-                    onChangeText={appendMessage}
-                    value={state.ownMessage}
+            <MessageInput
+                addMessages={addMessages}
+                appendMessage={appendMessage}
+                value={state.ownMessage}
+            />
 
-                />
-                <TouchableHighlight
-                    style={styles.button}
-                    onPress={addMessages}
-                >
-                    <Text>
-                        {UIEnum.Send}
-                    </Text>
-                </TouchableHighlight>
-            </View>
         </View>
     )
 }
-
 
 
 export default ImageChat;

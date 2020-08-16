@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
         height: '20%'
     },
     text: {
-
         fontSize: 20,
         fontWeight: "bold"
     },
@@ -52,6 +51,32 @@ const styles = StyleSheet.create({
     },
     messagesContainer: {
         height: '40%'
+    },
+    usersNamesContainer:{
+        width:'100%',
+        height:'20%'
+    },
+    userNameInputContainer: {
+        flex:1,
+        flexDirection: 'row',
+        height:'50%'
+    },
+    userNameInput:{
+        marginTop:'3%',
+        borderColor:'black',
+        backgroundColor:'white',
+        borderRadius:10,
+        width:'60%',
+        height:'60%',
+        flexDirection: 'row',
+
+    },
+    userNameTitle:{
+        marginTop:'5%',
+        fontSize: 18,
+        fontWeight: "200",
+        textAlign:"center",
+        marginRight:'5%'
     }
 });
 
