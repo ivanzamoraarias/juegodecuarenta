@@ -19,7 +19,6 @@ function Reducer(state:ImageChatState, action:actionEventType): ImageChatState {
             return Handlers.SetPartnerMessageHandler(state, action.stringValue);
 
         case Actions.setMessages:
-            console.log("Vienene aca de una");
             return Handlers.SetMessagesHandler(state, action.arrayValue);
     }
 

@@ -1,14 +1,14 @@
-import React, {createRef, useEffect, useReducer, useRef, useState} from "react";
-import {Image, View, StyleSheet, Text, TextInput, TouchableHighlight, ScrollView} from "react-native";
+import React, {createRef, useEffect, useReducer} from "react";
+import {Image, View, Text, TextInput, TouchableHighlight, ScrollView} from "react-native";
 import {FirebaseService} from "../Firebase/Firebase";
 import MemoryService from "../Storage/Memory/MemoryService";
 import Reducer from "../Reducer/ImageChatReducer/Reducer";
 import {initialState} from "../Reducer/ImageChatReducer/State";
-import Actions from "../Reducer/ImageChatReducer/Actions";
 import ImageEvents from "../Reducer/ImageChatReducer/Events";
-
-
-const imageUri: string = "https://i.pinimg.com/originals/ed/83/7a/ed837acb91e3ee1a42c46538b509b504.jpg";
+import DatabaseEnum from "../Constants/DatabaseEnum";
+import styles from "./ImageChatStyle";
+import UIEnum from "../Constants/UIEnum";
+import AssetsEnum from "../Constants/AssetsEnum";
 
 const ImageChat = (props:any) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
@@ -16,7 +16,7 @@ const ImageChat = (props:any) => {
 
     useEffect(() => {
         MemoryService
-            .addMemoryKey("messages");
+            .addMemoryKey(DatabaseEnum.Messages);
     }, []);
 
 
@@ -36,7 +36,7 @@ const ImageChat = (props:any) => {
         dispatch(
             ImageEvents
                 .GetEventForSetMessages(
-                    MemoryService.getElementByKey("messages")
+                    MemoryService.getElementByKey(DatabaseEnum.Messages)
                 )
         );
     }, [state.partnerMessage]);
@@ -45,22 +45,31 @@ const ImageChat = (props:any) => {
         if (!value)
             return;
 
-        dispatch({type:Actions.setPartnerMessage,stringValue:value.lastOne});
-        MemoryService.pushElementToKey("messages", `${value.lastOne}`);
+        dispatch(ImageEvents.GetEventForSetPartnerMessage(value.lastOne));
+        MemoryService.pushElementToKey(DatabaseEnum.Messages, `${value.lastOne}`);
     }
 
 
     const appendMessage = (message: string) => {
-        //setOwnMessage(message);
-        dispatch({type:Actions.setOwnMessage, stringValue:message});
+        dispatch(
+            ImageEvents.GetEventForSetOwnMessage(message)
+        );
     }
     const addMessages = () => {
         const newMessage: string = `${state.ownMessage}`;
 
         FirebaseService.storeNewOwnMessage(state.ownName, state.ownMessage);
-        MemoryService.pushElementToKey("messages", newMessage);
-        dispatch({type:Actions.setMessages, arrayValue:[...MemoryService.getElementByKey("messages")]})
-        dispatch({type:Actions.setOwnMessage, stringValue:""});
+        MemoryService.pushElementToKey(DatabaseEnum.Messages, newMessage);
+        dispatch(
+            ImageEvents
+                .GetEventForSetMessages(
+                    MemoryService.getElementByKey(DatabaseEnum.Messages)
+                )
+        );
+
+        dispatch(
+            ImageEvents.GetEventForEmptyOwnMessage()
+        );
 
     }
 
@@ -74,23 +83,23 @@ const ImageChat = (props:any) => {
     return (
         <View style={styles.container}>
             <TextInput
-                placeholder={"Tu amigo"}
+                placeholder={UIEnum.YourFriend}
                 onChangeText={(val: string) => {
-                    dispatch({type:Actions.setPartnerName,stringValue:val});
+                    dispatch(ImageEvents.GetEventForSetPartnerName(val));
                 }}
                 value={state.partnerName}
             />
             <TextInput
-                placeholder={"Tu nombre"}
+                placeholder={UIEnum.YourName}
                 onChangeText={(val: string) => {
-                    dispatch({type:Actions.setOwnName, stringValue:val})
+                    dispatch(ImageEvents.GetEventForSetOwnName(val));
                 }}
                 value={state.ownName}
             />
             <Image
                 style={styles.logo}
                 source={{
-                    uri: imageUri
+                    uri: AssetsEnum.CatsImage
                 }}/>
             <View style={styles.messagesContainer}>
                 <ScrollView
@@ -106,7 +115,7 @@ const ImageChat = (props:any) => {
             <View style={styles.userTextInput}>
                 <TextInput
                     style={styles.textToSend}
-                    placeholder={"Escribe tu mensaje aqui"}
+                    placeholder={UIEnum.WriteHere}
                     onChangeText={appendMessage}
                     value={state.ownMessage}
 
@@ -116,7 +125,7 @@ const ImageChat = (props:any) => {
                     onPress={addMessages}
                 >
                     <Text>
-                        {"Enviar"}
+                        {UIEnum.Send}
                     </Text>
                 </TouchableHighlight>
             </View>
@@ -124,59 +133,6 @@ const ImageChat = (props:any) => {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex:1,
-        paddingTop: 10,
-        paddingLeft: 50,
-        paddingRight: 50
-    },
-    tinyLogo: {
-        width: 50,
-        height: 50,
-    },
-    photoContainer: {
-        flex: 1,
-        width: '100%',
-        height: '40%'
-    },
-    logo: {
-        width: '100%',
-        height: '20%'
-    },
-    text: {
 
-        fontSize: 20,
-        fontWeight: "bold"
-    },
-    userTextInput:{
-        flex:1,
-        flexDirection: 'row',
-        textAlign: 'center',
-        height:"30%"
-    },
-    textToSend: {
-        width:"60%",
-        padding: 1,
-        height:"30%",
-        justifyContent: "space-between"
-    },
-    button: {
-        backgroundColor: "#F194FF",
-        borderRadius: 20,
-        padding: 1,
-        marginTop:5,
-        elevation: 2,
-        width:"30%",
-        height:"30%",
-        textAlign:"center",
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    messagesContainer: {
-        height: '40%'
-    }
-});
 
 export default ImageChat;

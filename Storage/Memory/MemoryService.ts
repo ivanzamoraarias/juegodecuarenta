@@ -2,19 +2,7 @@ class MemoryService {
     private static memory: { store: { [k: string]: any[]; } }= {store:{}};
 
     public static initializeMemoryService(){
-        // console.log("Mierdaaa", MemoryService.memory);
-        // console.log("Tipo de la m", typeof MemoryService.memory);
-        //
-        // if(MemoryService.memory !== null ||
-        //     MemoryService.memory !== undefined) {
-        //     console.log("Viene aca ?");
-        //     return;
-        // }
-        // console.log("Mierda dos ?");
-        // MemoryService.memory = {
-        //     store:{}
-        // };
-        //console.log("STOREEEE", MemoryService.memory);
+
     }
 
     public static addMemoryKey(key: string) {
