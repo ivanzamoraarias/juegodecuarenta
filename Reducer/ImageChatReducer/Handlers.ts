@@ -3,8 +3,10 @@ import {ImageChatState} from "./Interfaces";
 export class Handlers {
     public static SetOwnNameHandler(
         state:ImageChatState,
-        value:string)
+        value:string|undefined)
         :ImageChatState {
+        if(value === undefined)
+            return {...state};
         return {
             ...state,
             ownName:value
@@ -13,8 +15,10 @@ export class Handlers {
 
     public static SetPartnerNameHandler(
         state:ImageChatState,
-        value:string)
+        value:string|undefined)
         :ImageChatState {
+        if(value === undefined)
+            return {...state};
         return {
             ...state,
             partnerName:value
@@ -23,8 +27,10 @@ export class Handlers {
 
     public static SetOwnMessageHandler(
         state:ImageChatState,
-        value:string)
+        value:string|undefined)
         :ImageChatState {
+        if(value === undefined)
+            return {...state};
         return {
             ...state,
             ownMessage: value
@@ -33,8 +39,10 @@ export class Handlers {
 
     public static SetPartnerMessageHandler(
         state:ImageChatState,
-        value:string)
+        value:string|undefined)
         :ImageChatState {
+        if(value === undefined)
+            return {...state};
         return {
             ...state,
             partnerMessage: value
@@ -43,8 +51,12 @@ export class Handlers {
 
     public static SetMessagesHandler(
         state:ImageChatState,
-        value:string[])
+        value:string[]| undefined)
         :ImageChatState{
+
+        if(value === undefined)
+            return {...state};
+
         return {
             ...state,
             messages: [...value]

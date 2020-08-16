@@ -8,6 +8,6 @@ export interface ImageChatState {
 
 export interface actionEventType {
     type:string,
-    stringValue:string,
-    arrayValue:string[]
+    stringValue?:string,
+    arrayValue?:string[]
 }

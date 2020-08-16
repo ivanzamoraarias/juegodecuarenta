@@ -1,25 +1,23 @@
-import React, {useEffect, useState} from "react";
+import React, {createRef, useEffect, useReducer, useRef, useState} from "react";
 import {Image, View, StyleSheet, Text, TextInput, TouchableHighlight, ScrollView} from "react-native";
-import {WebView} from "react-native-webview";
 import {FirebaseService} from "../Firebase/Firebase";
 import MemoryService from "../Storage/Memory/MemoryService";
+import Reducer from "../Reducer/ImageChatReducer/Reducer";
+import {initialState} from "../Reducer/ImageChatReducer/State";
+import Actions from "../Reducer/ImageChatReducer/Actions";
+import ImageEvents from "../Reducer/ImageChatReducer/Events";
 
 
 const imageUri: string = "https://i.pinimg.com/originals/ed/83/7a/ed837acb91e3ee1a42c46538b509b504.jpg";
-//https://1.bp.blogspot.com/-slPQMdRIiE0/XchjiHQcOgI/AAAAAAAALm8/OK-GsqynYm4qhL7DuCvnyzN24etS76jOACKgBGAsYHg/s1600/IMG_20191028_130922.jpg
 
 const ImageChat = (props:any) => {
+    const [state, dispatch] = useReducer(Reducer, initialState);
+    const scrollViewRef = createRef<ScrollView>();
 
     useEffect(() => {
-        MemoryService.addMemoryKey("messages");
+        MemoryService
+            .addMemoryKey("messages");
     }, []);
-
-    //todo create a reducer for this part
-    const [ownMessage, setOwnMessage] = useState("");
-    const [messages, setMessages] = useState([""]);
-    const [partnerName, setPartnerName] = useState("");
-    const [ownName, setOwnName] = useState("");
-    const [partnerMessage, setPartnerMessage] = useState("");
 
 
     useEffect(() => {
@@ -29,35 +27,47 @@ const ImageChat = (props:any) => {
             .disconnectFirebase();
         FirebaseService
             .listenNewPartnerMessage(
-                partnerName,
+                state.partnerName,
                 updateFromFirebase);
 
-    }, [partnerName])
+    }, [state.partnerName])
 
     useEffect(() => {
-        setMessages([...MemoryService.getElementByKey("messages")]);
-    }, [partnerMessage]);
+        dispatch(
+            ImageEvents
+                .GetEventForSetMessages(
+                    MemoryService.getElementByKey("messages")
+                )
+        );
+    }, [state.partnerMessage]);
 
     const updateFromFirebase = (value: { lastOne: string }) => {
         if (!value)
             return;
 
-        setPartnerMessage(value.lastOne);
+        dispatch({type:Actions.setPartnerMessage,stringValue:value.lastOne});
         MemoryService.pushElementToKey("messages", `${value.lastOne}`);
     }
 
 
     const appendMessage = (message: string) => {
-        setOwnMessage(message);
+        //setOwnMessage(message);
+        dispatch({type:Actions.setOwnMessage, stringValue:message});
     }
     const addMessages = () => {
-        const newMessage: string = `${ownMessage}`;
+        const newMessage: string = `${state.ownMessage}`;
 
-        FirebaseService.storeNewOwnMessage(ownName, ownMessage);
+        FirebaseService.storeNewOwnMessage(state.ownName, state.ownMessage);
         MemoryService.pushElementToKey("messages", newMessage);
-        setMessages([...MemoryService.getElementByKey("messages")]);
+        dispatch({type:Actions.setMessages, arrayValue:[...MemoryService.getElementByKey("messages")]})
+        dispatch({type:Actions.setOwnMessage, stringValue:""});
 
+    }
 
+    const scrollToButton= ()=> {
+        if(scrollViewRef.current === null)
+            return;
+        scrollViewRef.current.scrollToEnd({animated: true})
     }
 
 
@@ -65,13 +75,17 @@ const ImageChat = (props:any) => {
         <View style={styles.container}>
             <TextInput
                 placeholder={"Tu amigo"}
-                onChangeText={(val: string) => setPartnerName(val)}
-                value={partnerName}
+                onChangeText={(val: string) => {
+                    dispatch({type:Actions.setPartnerName,stringValue:val});
+                }}
+                value={state.partnerName}
             />
             <TextInput
                 placeholder={"Tu nombre"}
-                onChangeText={(val: string) => setOwnName(val)}
-                value={ownName}
+                onChangeText={(val: string) => {
+                    dispatch({type:Actions.setOwnName, stringValue:val})
+                }}
+                value={state.ownName}
             />
             <Image
                 style={styles.logo}
@@ -79,9 +93,12 @@ const ImageChat = (props:any) => {
                     uri: imageUri
                 }}/>
             <View style={styles.messagesContainer}>
-                <ScrollView>
+                <ScrollView
+                    ref={scrollViewRef}
+                    onContentSizeChange={scrollToButton}
+                >
                     <Text style={styles.text}>
-                        {messages.map((m: string) => `\n${m}`)}
+                        {state.messages.map((m: string) => `\n${m}`)}
                     </Text>
                 </ScrollView>
 
@@ -91,7 +108,7 @@ const ImageChat = (props:any) => {
                     style={styles.textToSend}
                     placeholder={"Escribe tu mensaje aqui"}
                     onChangeText={appendMessage}
-                    value={ownMessage}
+                    value={state.ownMessage}
 
                 />
                 <TouchableHighlight

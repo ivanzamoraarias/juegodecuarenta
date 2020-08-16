@@ -49,7 +49,7 @@ class MemoryService {
             return [];
         const storeArray: any[] =
             MemoryService.memory.store[`${key}`] === undefined?[]:
-                MemoryService.memory.store[`${key}`]
+                [...MemoryService.memory.store[`${key}`]]
         ;
         return storeArray;
     }
